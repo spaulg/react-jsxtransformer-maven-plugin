@@ -43,6 +43,8 @@ import java.util.jar.JarFile;
 @Mojo(name = "compile", defaultPhase = LifecyclePhase.COMPILE)
 final public class CompilerMojo extends AbstractMojo
 {
+    private static final int BUFFER_SIZE = 0x4000;
+
     protected Logger logger;
 
     @Parameter(defaultValue = "${project.build.directory}/react-jsxtransformer/")
@@ -419,6 +421,7 @@ final public class CompilerMojo extends AbstractMojo
             InputStream jarEntryStream = null;
             FileOutputStream outputFileStream = null;
             JarFile jarFile = null;
+            byte[] buffer = new byte[BUFFER_SIZE];
 
             try {
                 jarFile = new JarFile(jarPath);
@@ -447,8 +450,12 @@ final public class CompilerMojo extends AbstractMojo
                             jarEntryStream = jarFile.getInputStream(entry);
                             outputFileStream = new FileOutputStream(outputFile);
 
-                            while (jarEntryStream.available() > 0) {
-                                outputFileStream.write(jarEntryStream.read());
+                            while (true) {
+                                int bytesRead = jarEntryStream.read(buffer);
+                                if (bytesRead == -1) {
+                                    break;
+                                }
+                                outputFileStream.write(buffer, 0, bytesRead);
                             }
 
                             jarEntryStream.close();
