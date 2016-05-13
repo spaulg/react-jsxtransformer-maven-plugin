@@ -5,7 +5,7 @@ Apply the plugin to the maven pom.
 <plugin>
     <groupId>uk.co.codezen</groupId>
     <artifactId>react-jsxtransformer-maven-plugin</artifactId>
-    <version>1.0</version>
+    <version>1.0.1</version>
 
     <executions>
         <execution>
